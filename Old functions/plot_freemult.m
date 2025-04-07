@@ -1,0 +1,56 @@
+function [ft] = plot_freemult(out_lines,mmn,len)
+L1 = 1:len(1);
+L2 = 1:len(2);
+L3 = 1:len(3);
+
+block_names = {'EL','CA','CB','FT'};
+
+if isempty(mmn)
+    mmn=20;
+end
+for i = 1:3
+    
+    switch i
+        case 1
+            L=L1;
+            end1 = 0;
+        case 2
+            L=L2;
+            end1=length(L1);
+        case 3
+            L=L3;
+            end1 = end1+length(L2);
+    end
+    cons = ones(numel(out_lines),len(i)); remp = nan(numel(out_lines),len(i));
+    for rep = 1:numel(out_lines)
+        c = [movmean(out_lines{rep}{1}{i},mmn,'omitnan','Endpoints','fill')];
+        r =[movmean(out_lines{rep}{2}{i},mmn,'omitnan','Endpoints','fill')];
+
+        cons(rep,1:length(c))=movmean(c,mmn,'omitnan','Endpoints','fill');
+        cons(rep,length(c)+1:end)=1;
+        remp(rep,1:length(r))=movmean(r,mmn,'omitnan','Endpoints','fill');
+        remp(rep,length(c)+1:end)=1;
+    end
+
+    col = {'#E200FF','#0A00FF','#FF7B00'};
+    mean_all{1} =  mean(cons);  mean_all{2} =  mean(remp);
+    std_all{1} =  std(cons);  std_all{2} =  std(remp);
+
+
+
+    hold on
+    for j = 1:2
+        x = end1+1:end1+length(mean_all{j});
+        xconf = [x x(end:-1:1)] ;
+        yconf = [mean_all{j}+std_all{j} mean_all{j}(end:-1:1)-std_all{j}(end:-1:1)];
+        p = fill(xconf,yconf,'r');
+        p.FaceColor=col{j};
+        p.FaceAlpha = 0.4;
+        p.EdgeColor = 'none';
+
+        plot(x,mean_all{j},'Color',col{j},'LineWidth',1)
+    end
+    xline([end1],'--',block_names{i})
+    ylim([0 1.1])
+    ft = gcf;
+end
