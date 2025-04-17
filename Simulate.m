@@ -1,5 +1,6 @@
 function [MODEL] = Simulate(model,trials,parameter,map,options)
 %% Simulate free and forced trials
+
 %%% This function creates a 'MODEL' object with a simulated set of choice
 %%% and RT data.
 %%% Input:
@@ -9,6 +10,7 @@ function [MODEL] = Simulate(model,trials,parameter,map,options)
 %           [alpha, beta, t_start, t_switch, theta]
 % map: Matrix of stimulus mapping, Rows = pairings, Columns = [stimulus, responseA, responseB] 
 %      (e.g., [1,1,1;2,2,3;3,3,2])
+
 %%% Options:
 % stimulus: A vector of the stimuli seen in each trial, default = random.
 % force: logical vector of flags for forced (=1) or free trials (=0, default)
@@ -110,33 +112,23 @@ for t = 1:trials
         end
     end
 
-
     %%% Observation function
     if FORCE(t) ==0
-        [MODEL] = fun(MODEL,"obs",{[]});
+        [MODEL] = fun(MODEL,"obs",t,{[]});
     else
-        [MODEL] = fun(MODEL,"obs",{FORCE_RT(t)});
+        [MODEL] = fun(MODEL,"obs",t,{FORCE_RT(t)});
     end
 
     if MODEL.data.Choice(t)==STIM(t)
-        Model.data.Outcome(t) =REW;
+        MODEL.data.Outcome(t)=REW;
     else
-        Model.data.Outcome(t)=ERR;
+        MODEL.data.Outcome(t)=ERR;
     end
 
     %%% Learning Model
-    if ~isnan(Model.data.Choice(t))
+    if ~isnan(MODEL.data.Choice(t))
         [MODEL] = fun(MODEL,"learn",t,choice_opt);
     end
 
 end
 end
-
-
-Q = obj.values.Q;
-H = obj.values.H;
-num_stim = size(Q,2);
-
-STIM = obj.data.Stimulus(RT);
-CHOSE = obj.data.Choice(RT);
-OUTCOME = obj.data.Outcome(RT);

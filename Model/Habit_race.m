@@ -66,7 +66,7 @@ end
 if step == "obs" % observation model
     dt = 0.001;
    
-    if ~isempty(additional)
+    if ~isempty(additional{1})
         RT = additional{1};
         force = 1;
     else
@@ -102,17 +102,17 @@ if step == "obs" % observation model
         end
         RT=RT*dt;
         if all(isnan(RT))
-            obj.data.Reaction_Time = nan;
-            obj.data.chose(T)=nan;
+            obj.data.Reaction_Time(T) = nan;
+            obj.data.Choice(T)=nan;
         else
-          [obj.data.Reaction_Time(T),obj.data.chose(T)] = min(RT);
+          [obj.data.Reaction_Time(T),obj.data.Choice(T)] = min(RT);
         end
     elseif force == 1
         if RT<=t_h
-    	    obj.data.chose(T) = randi(num_choice);
+    	    obj.data.Choice(T) = randi(num_choice);
         else
-            X_force = X(:,round((T)/dt));
-            [~,obj.data.chose(T)] = max((X_force == max(X_force)));
+            X_force = X(:,round((RT)/dt));
+            [~,obj.data.Choice(T)] = max((X_force == max(X_force)));
         end
         obj.data.Reaction_Time(T)=RT;
     end

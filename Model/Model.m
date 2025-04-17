@@ -56,7 +56,56 @@ classdef Model
             obj.data = table(choice',stim',rt',outcome',force',remap_trial',VariableNames= {'Choice','Stimulus','Reaction_Time','Outcome','Forced','Remap_trial'});
         
         end
-    
+        
+        %%% Approximate T_start
+        function [th_es,tq_es]=approx_th(obj)
+            %%% This function provides an estimate of t_h based on the last time the
+            %%% forced trial habit curve was under 0.25, before it reaches its peak
+            %%% value.
+            %%% Input:
+            % obj = Model object containing all required data
+            %%% Output:
+            % th_es = estimate of t_h
+            % tq_es = time of peak habit value
+
+            mmn =200;
+            d = obj.data(obj.data.Forced==1,:);
+            r_trial = find(d.Remap_trial==1);
+            Map = obj.map;
+            %%% Finding idx of trials with a remapped stimulus
+            hab_tr = zeros(2,height(d)); % Trials where a remapped stimulus was seen
+
+
+
+            for i = 1:size(Map,1)
+                idx_h = find(d.Stimulus==Map(i,1) & d.Choice ==Map(i,2));
+                idx_c = find(d.Stimulus==Map(i,1) & d.Choice ==Map(i,3));
+                if ~isempty(r_trial)
+                    idx_h(r_trial(idx_h)==0)=[];
+                    idx_c(r_trial(idx_h)==0)=[];
+                end
+                hab_tr(1,idx_h)=1;
+                hab_tr(2,idx_c)=1;
+            end
+            hab_tr = logical(hab_tr);
+            hab = nan(1,round(max(d.Reaction_Time))*1000);
+            hab(uint16(d.Reaction_Time(hab_tr(1,:))*1000))= 1;
+            hab(uint16(d.Reaction_Time(hab_tr(2,:))*1000))= 0;
+            hab_av=movmean(hab,mmn,'omitnan');
+            [~,tq_idx] = max(hab_av(150:end));
+            tq_idx=tq_idx+150;
+            tq_es = tq_idx(end)./1000;
+             th_es = find(0.25-hab_av(1:tq_idx)<=0,1,'last')./1000;
+                
+            
+            if isempty(th_es)
+                th_es = 0.15;
+            end
+
+        end
+
+
+
         %%% update model object to account for time parameter heuristics
         function [obj] = update_time(obj,nd)
             [t1,t2]=approx_th(obj);

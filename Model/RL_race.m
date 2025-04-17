@@ -1,4 +1,4 @@
-function [output1,output2] = RL_race(obj,step,t,additional)
+function [output1,output2] = RL_race(obj,step,T,additional)
 %% This function holds all the observation model and learning rules for the RL RACE model
 %%% Input:
 % obj: Model Object containing data and variables
@@ -11,7 +11,6 @@ function [output1,output2] = RL_race(obj,step,t,additional)
 %   "mu";
 
 par = obj.par;
-
 aq = par.aq;
 bq = par.bq;
 t_q = par.tq;
@@ -23,17 +22,17 @@ Q = obj.values.Q;
 num_stim = size(Q,2);
 num_choice = size(Q,1);
 
-STIM = obj.data.Stimulus(t);
-CHOSE = obj.data.Choice(t);
-OUTCOME = obj.data.Outcome(t);
+STIM = obj.data.Stimulus(T);
+CHOSE = obj.data.Choice(T);
+OUTCOME = obj.data.Outcome(T);
 
 if step == "learn"
-    Q(:,:,t+1)=Q(:,:,t);
-    dq =OUTCOME-Q(CHOSE,STIM,t);
-    Q(CHOSE,STIM,t+1)= Q(CHOSE,STIM,t)+aq.*dq;
+    Q(:,:,T+1)=Q(:,:,T);
+    dq =OUTCOME-Q(CHOSE,STIM,T);
+    Q(CHOSE,STIM,T+1)= Q(CHOSE,STIM,T)+aq.*dq;
 
     obj.values.Q = Q;
-    obj.values.dq(CHOSE,STIM,t)=dq;
+    obj.values.dq(CHOSE,STIM,T)=dq;
     output1 = obj;
 
     output2 = [];
@@ -41,7 +40,7 @@ if step == "learn"
 end
 
 if step == "mu"
-    output1 = bq.*Q(:,STIM,t);
+    output1 = bq.*Q(:,STIM,T);
     output2 = output1;
 end
 
@@ -51,7 +50,7 @@ end
 if step == "obs" % observation model
     dt = 0.001;
     
-     if ~isempty(additional)
+     if ~isempty(additional{1})
         RT = additional{1};
         force = 1;
     else
@@ -60,17 +59,12 @@ if step == "obs" % observation model
     
     
     
-    
-    
-    
-    
     % %         Adapted to free v forced choice
 
     t0 = round(t_q/dt);
     noise = randn(num_stim,2/dt);
     noise(:,1:t0)=0;
-    t = additional{1};
-    mu = bq.*Q(:,STIM,t);
+    mu = bq.*Q(:,STIM,T);
     t1 = round((t_q-dt)/dt:2/dt);
     V = zeros(num_stim,2/dt);
     if t1(1)==0
@@ -90,21 +84,22 @@ if step == "obs" % observation model
         end
         RT=RT*dt;
         if all(isnan(RT))
-            obj.data.Reaction_Time = nan;
-            obj.data.chose(T)=nan;
+            obj.data.Reaction_Time(T) = nan;
+            obj.data.Choice(T)=nan;
         else
-            [obj.data.Reaction_Time(T),obj.data.chose(T)] = min(RT);
+            [obj.data.Reaction_Time(T),obj.data.Choice(T)] = min(RT);
         end
 
-    else %% t is predetermined
-	    if t<=t_q
-	        obj.data.chose(T) = randi(num_choice);
+    elseif force ==1 %% t is predetermined
+	    if RT<=t_q
+	        obj.data.Choice(T) = randi(num_choice);
         else
-            X_force = X(:,round(t/dt));
-            [~,obj.data.chose(T)] = max((X_force == max(X_force)));
+            X_force = X(:,round(RT/dt));
+            [~,obj.data.Choice(T)] = max((X_force == max(X_force)));
         end
         obj.data.Reaction_Time(T)=RT;
     end
+    output1=obj; output2 = [];
 end
 
 

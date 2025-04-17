@@ -1,4 +1,4 @@
-function [output1,output2] = RL2_race(obj,step,t,additional)
+function [output1,output2] = RL2_race(obj,step,T,additional)
 %% This function holds all the observation model and learning rules for the RL2 RACE model
 %%% Input:
 % obj: Model Object containing data and variables
@@ -27,39 +27,39 @@ num_stim = size(Q1,2);
 num_choice = size(Q1,1);
 
 
-STIM = obj.data.Stimulus(t);
-CHOSE = obj.data.Choice(t);
-OUTCOME = obj.data.Outcome(t);
+STIM = obj.data.Stimulus(T);
+CHOSE = obj.data.Choice(T);
+OUTCOME = obj.data.Outcome(T);
 
 
 if step == "learn"
-    Q1(:,:,t+1)=Q1(:,:,t);
-    Q2(:,:,t+1)=Q2(:,:,t);
+    Q1(:,:,T+1)=Q1(:,:,T);
+    Q2(:,:,T+1)=Q2(:,:,T);
     
-    dq1 =OUTCOME-Q1(CHOSE,STIM,t);
-    Q1(CHOSE,STIM,t+1)=Q1(CHOSE,STIM,t)+aq1.*dq1;
+    dq1 =OUTCOME-Q1(CHOSE,STIM,T);
+    Q1(CHOSE,STIM,T+1)=Q1(CHOSE,STIM,T)+aq1.*dq1;
 
-    dq2 =OUTCOME-Q2(CHOSE,STIM,t);
-    Q2(CHOSE,STIM,t+1)=Q2(CHOSE,STIM,t)+aq2.*dq2;
+    dq2 =OUTCOME-Q2(CHOSE,STIM,T);
+    Q2(CHOSE,STIM,T+1)=Q2(CHOSE,STIM,T)+aq2.*dq2;
     
     obj.values.Q1 = Q1;
     obj.values.Q2 = Q2;
-    obj.values.dq1(CHOSE,STIM,t)=dq1;
-    obj.values.dq2(CHOSE,STIM,t)=dq2;
+    obj.values.dq1(CHOSE,STIM,T)=dq1;
+    obj.values.dq2(CHOSE,STIM,T)=dq2;
     output1 = obj;
     output2 = [];
 end
 
 
 if step == "mu"
-    output1 = bq1.*Q1(:,STIM,t);
-    output2 = bq1.*Q1(:,STIM,t)+bq2.*Q2(:,STIM,t);
+    output1 = bq1.*Q1(:,STIM,T);
+    output2 = bq1.*Q1(:,STIM,T)+bq2.*Q2(:,STIM,T);
 end
 
 
 if step == "obs" % observation model
     dt = 0.001;
-    if ~isempty(additional)
+    if ~isempty(additional{1})
         RT = additional{1};
         force = 1;
     else
@@ -94,17 +94,17 @@ if step == "obs" % observation model
         end
         RT=RT*dt;
         if all(isnan(RT))
-            obj.data.Reaction_Time = nan;
-            obj.data.chose(T)=nan;
+            obj.data.Reaction_Time(T) = nan;
+            obj.data.Choice(T)=nan;
         else
-          [obj.data.Reaction_Time(T),obj.data.chose(T)] = min(RT);
+          [obj.data.Reaction_Time(T),obj.data.Choice(T)] = min(RT);
         end
     elseif force == 1
         if RT<=t_q1
-    	    obj.data.chose(T) = randi(num_choice);
+    	    obj.data.Choice(T) = randi(num_choice);
         else
-            X_force = X(:,round((T)/dt));
-            [~,obj.data.chose(T)] = max((X_force == max(X_force)));
+            X_force = X(:,round((RT)/dt));
+            [~,obj.data.Choice(T)] = max((X_force == max(X_force)));
         end
         obj.data.Reaction_Time(T)=RT;
     end

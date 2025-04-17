@@ -39,7 +39,7 @@ arguments
     options.model string {mustBeMember(options.model,["Habit_race","RL2_race","RL_race"])} ="Habit_race"
    
     options.remap_trial (1,:) double = 1
-    options.non_decision (1,1) double = [];
+    options.non_decision (1,1) double = NaN;
     options.include_fit (1,:) double = ones(size(choice))
     options.weight (1,1) double =0.5;
     options.new_cond(1,:) double = [];
@@ -116,7 +116,7 @@ LB = table2array(MODEL.par_bound("LB",:));
 UB = table2array(MODEL.par_bound("UB",:));
 
 
-[P_fit,NLL,MODEL]=fmincon(fun,init,[],[],[],[],LB,UB);
+[P_fit,NLL]=fmincon(fun,init,[],[],[],[],LB,UB);
 
 PARAM(free_idx)=P_fit;
 
@@ -125,7 +125,7 @@ MODEL = update_param(MODEL,P_fit);
 
 
 fun = @(init)runfitting(init,MODEL.free_par,fit,MODEL,new_cond);
-[~,LL]=fun(P_fit);
+[~,LL,MODEL]=fun(P_fit);
 
 MODEL.fit.LL = LL;
 MODEL.fit.NLL = NLL;

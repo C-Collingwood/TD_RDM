@@ -14,7 +14,6 @@ function [NLL,LL,MODEL] = runfitting(init,init_names,fit,MODEL,new_cond)
 
 %%% Extract relevant data
 fun = str2func(MODEL.type);
-
 data = MODEL.data;
 LL=nan(1,height(data));
 forced_flag = MODEL.data.Forced;
@@ -36,7 +35,7 @@ switch MODEL.type
         t_switch = MODEL.par.tq2;
     case {"RL_race"}
         t_start = MODEL.par.tq;
-        t_switch = t_start+0.5; % Irrelevant as before and after are the same.
+        t_switch = t_start+0.15; % Irrelevant as before and after are the same.
 end
 
 CHOICE_OPT = unique(MODEL.map(:,2:3));
@@ -55,6 +54,7 @@ for t = 1:height(data)
             end
         end
     end
+    
     [MODEL] = fun(MODEL,"learn",t,CHOICE_OPT);
 
     %%% calculating likelihood

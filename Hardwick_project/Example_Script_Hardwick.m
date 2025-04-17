@@ -8,7 +8,7 @@ models = {"RL_race","RL2_race","Habit_race"};
 
 
 %%% Fitting to all subjects
-parfor i = 1%:length(sub_ID)
+for i = 1%:length(sub_ID)
 s_data = data.(sub_ID{i});
 
 %%% Clean data
@@ -40,7 +40,6 @@ REMAP_TRIAL = [find(s_data.Block==3&s_data.Exp==1,1,"first"),find(s_data.Block==
 NON_DECISION = t_h(i);%0; % ms, (Use inbuilt heuristic, this is default value), 
 INCLUDE_FIT = ones(1,height(s_data));
      INCLUDE_FIT(s_data.First~=1) =0 ; % only include first responses in fitting
-     %INCLUDE_FIT(s_data.Block==) = 0; % ignore Criterion A in fitting
      INCLUDE_FIT((s_data.Block==1|s_data.Block==2) & s_data.Trial>50) = 0;
 WEIGHT = 0.75;
 NEW_COND = find(s_data.Exp==2,1,"first");
