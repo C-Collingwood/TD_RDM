@@ -59,13 +59,13 @@ mult_start: How many start-points to run fitting from, using the MultiStart MATL
 ### Output
 PARAM: The best-fitting parameters in a vector. Order is model-dependent:  
     1. "Habit1_Race"  
-        ..* \[aq, ah, bq, bh, t2, theta]   
+        * \[aq, ah, bq, bh, t2, theta]   
     2. "Habit2_Race  
-        ..* \[aq, ah, bq, bh1, bh2, t2, theta]   
+        * \[aq, ah, bq, bh1, bh2, t2, theta]   
     3. "RL_Race"  
-        ..* \[aq, bq, theta]  
+        * \[aq, bq, theta]  
     4. "RL2_Race"  
-        ..* \[aq2, aq1, bq2, bq1, t2, theta]  
+        * \[aq2, aq1, bq2, bq1, t2, theta]  
 
 NLL: The total negative loglikelihood of the best-fitting parameters.  
 LL: A vector containing the loglikelihood of each trial that was included in fitting. Excluded trials are returned as NaN.  
@@ -78,12 +78,12 @@ MODEL: An object containing all data regarding the best-fitting parameters, incl
     * MODEL.map: The mapping structure of stimulus to correct response.  
     * MODEL.par_bound: The upper and lower boundaries on each free parameter.  
     * MODEL.data: A table containing all the data used during the course of model learning and fitting, including:  
-        * .data.Choice  
-        * .data.Stimulus  
-        * .data.Reaction_Time  
-        * .data.Outcome  
-        * .data.Time-Controlled  
-        * .data.Remap_trial (0 = Map A, 1 = Map B)  
+        &nbsp;* .data.Choice  
+        &nbsp;* .data.Stimulus  
+        &nbsp;* .data.Reaction_Time  
+        &nbsp;* .data.Outcome  
+        &nbsp;* .data.Time-Controlled  
+        &nbsp;* .data.Remap_trial (0 = Map A, 1 = Map B)  
 
 
 ## Additional Functions
