@@ -1,21 +1,28 @@
-function [output1,output2] = Habit_race(obj,step,T,additional)
+function [output1,output2] = Habit2_Race(obj,step,T,additional)
 %% This function holds all the observation model and learning rules for the HABIT RACE model
 %%% Input:
 % obj: Model Object containing data and variables
 % step: which process is occurring ("learn","observe","mu")
-% t: trial number
+% T: trial number
+% additional: If "learn", contains available choices, 
+%             If "observe" and time-controlled trial, contains RT. 
+
 %%% Output:
 % Depends on step.
 %   "learn"; 
-%   "observe";
+%   "obs";
 %   "mu";
+
+
+%%% Extract Parameters and Variables
 par = obj.par;
 aq = par.aq;
 ah = par.ah;
 bq = par.bq;
-bh = par.bh;
-t_h = par.th;
-t_q = par.tq;
+bh1 = par.bh1;
+bh2 = par.bh2;
+t_1 = par.t1;
+t_2 = par.t2;
 theta = par.theta;
 s=par.s;
 
@@ -27,11 +34,13 @@ num_stim = size(Q,2);
 num_choice = size(Q,1);
 
 
+%%% Extract trial data
 STIM = obj.data.Stimulus(T);
 CHOSE = obj.data.Choice(T);
 OUTCOME = obj.data.Outcome(T);
 
 if step == "learn"
+    %%% Calculate prediction error and update variables
     Q(:,:,T+1)=Q(:,:,T);
     H(:,:,T+1)=H(:,:,T);
     
@@ -57,8 +66,9 @@ end
 
 
 if step == "mu"
-    output1 = bh.*H(:,STIM,T);
-    output2 = bh.*H(:,STIM,T)+bq.*Q(:,STIM,T);
+     %%% Extract drift-rate
+    output1 = bh1.*H(:,STIM,T);
+    output2 = bh2.*H(:,STIM,T)+bq.*Q(:,STIM,T);
 end
 
 
@@ -74,22 +84,21 @@ if step == "obs" % observation model
     end
     
     %%% Accumulation 
-     t0 = round(t_h/dt);
+     t0 = round(t_1/dt);
      noise =  randn(num_stim,2/dt);
      noise(:,1:t0)=0;
-     mu1 = bh.*H(:,STIM,T);
-     mu2 =  bh.*H(:,STIM,T)+bq.*Q(:,STIM,T);
-    t1 = round((t_h-dt)/dt:t_q/dt);
-    t2 = round((t_q+dt)/dt:2/dt);
+    [mu1,mu2] = Habit2_Race(obj,"mu",T);
+    th = round((t_1-dt)/dt:t_2/dt);
+    tp = round((t_2+dt)/dt:2/dt);
      V = zeros(num_stim,2/dt);
-    if t1(1)==0
-        t1(1)=[];
+    if th(1)==0
+        th(1)=[];
     end
-    V(:,t1)=repmat(mu1,1,length(t1));
-    V(:,t2)=repmat(mu2,1,length(t2));
+    V(:,th)=repmat(mu1,1,length(th));
+    V(:,tp)=repmat(mu2,1,length(tp));
     X=cumsum(dt.*V+sqrt(dt).*noise,2);
 
-
+ %%% Free or Time-Controlled, calculate choice and RT
     if force ==0 % free choice
         for n=1:num_stim
             bound = find(X(n,:)>theta,1,'first');
@@ -108,7 +117,7 @@ if step == "obs" % observation model
           [obj.data.Reaction_Time(T),obj.data.Choice(T)] = min(RT);
         end
     elseif force == 1
-        if RT<=t_h
+        if RT<=t_1
     	    obj.data.Choice(T) = randi(num_choice);
         else
             X_force = X(:,round((RT)/dt));

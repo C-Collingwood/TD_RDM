@@ -1,11 +1,6 @@
 function [LL] = forced_cost(mu_chose,mu_other,s)
-%% Cost function for forced trials
-%%% Calculates the loglikelihood for a single forced trial
-%%% Input:
-% obj: Model object with data and parameters
-% t: trial number
-%%% Output:
-% LL: loglikelihood for the trial
+%% Cost function for time-controlled trials
+
 
 fun = @(x)fcost(x,mu_chose,mu_other,s);
 P = integral(fun,-Inf,Inf);

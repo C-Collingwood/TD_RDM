@@ -16,7 +16,7 @@ function [NLL,LL,MODEL] = runfitting(init,init_names,fit,MODEL,new_cond)
 fun = str2func(MODEL.type);
 data = MODEL.data;
 LL=nan(1,height(data));
-forced_flag = MODEL.data.Forced;
+forced_flag = MODEL.data.Time_Controlled;
 w = MODEL.weight;
 
 %%% Assign new parameters
@@ -26,15 +26,13 @@ for i = 1:length(init_names)
 end
 
 %%% Extract time parameters
+
 switch MODEL.type
-    case {"Habit_race"}
-        t_start = MODEL.par.th;
-        t_switch = MODEL.par.tq;
-    case {"RL2_race"}
-        t_start = MODEL.par.tq1;
-        t_switch = MODEL.par.tq2;
-    case {"RL_race"}
-        t_start = MODEL.par.tq;
+    case {"Habit1_Race", "RL2_Race", "Habit2_Race"}
+        t_start = MODEL.par.t1;
+        t_switch = MODEL.par.t2;
+    case "RL_Race"
+        t_start = MODEL.par.t1;
         t_switch = t_start+0.15; % Irrelevant as before and after are the same.
 end
 
@@ -53,8 +51,9 @@ for t = 1:height(data)
                 MODEL.values.(f{i})(:,:,t:end)=0;
             end
         end
+
     end
-    
+
     [MODEL] = fun(MODEL,"learn",t,CHOICE_OPT);
 
     %%% calculating likelihood
@@ -64,25 +63,24 @@ for t = 1:height(data)
         
         %%% Extract RT
         RT = MODEL.data.Reaction_Time(t);
-        STIM = MODEL.data.Stimulus(t);
         CHOSE = MODEL.data.Choice(t);
         NON_C = CHOICE_OPT;
         NON_C(NON_C==CHOSE)=[];
 
         rt = RT-t_start;
-        t1 = t_switch-t_start;
-        t2 = RT-t_switch;
+        t12 = t_switch-t_start;
+        t2e = RT-t_switch;
 
         if forced_flag(t)==1
-                if rt<t1
+                if rt<t12
                     mu = mu1.*rt;
                 else
-                    mu = mu1.*t1+mu2.*(t2);
+                    mu = mu1.*t12+mu2.*(t2e);
                 end
                 LL(t)=forced_cost(mu(CHOSE),mu(NON_C),s.*sqrt(rt));
         elseif forced_flag(t)==0
                 theta = MODEL.par.theta;
-                LL(t)= free_cost(rt, t1,mu1,mu2,CHOSE,NON_C,theta,s);
+                LL(t)= free_cost(rt, t12,mu1,mu2,CHOSE,NON_C,theta,s);
                 
         end
     end

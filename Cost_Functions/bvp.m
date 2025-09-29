@@ -1,4 +1,6 @@
 function [p_t] = bvp(x,t,v,s,b)
+% Calculates boundary value problem distribution
+
 var = s.^2;
 vt = v.*t;
 denom = 2.*var.*t;

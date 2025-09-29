@@ -1,4 +1,6 @@
 function [cdf_out] = cdf_ig(x,mu,lam)
+% Calculates CDF of first accumulation period
+
 sq = sqrt(lam./x);
 xm = x./mu;
 phi1 = normcdf(sq.*(xm-1));

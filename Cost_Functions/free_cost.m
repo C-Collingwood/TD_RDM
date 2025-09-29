@@ -1,5 +1,6 @@
-%%% calculate cost for free trials
 function [LL] = free_cost(rt,t1,mu1,mu2,chose,non_c,theta,s)
+%% Cost function of a free_RT trial
+
 mu1(mu1<=0)=0.00001;
 
 
