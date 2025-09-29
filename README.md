@@ -7,53 +7,53 @@ with an internal, time-dependent switch in drift-rate.
 Included in this toolbox are four models:
 Habit1_Race - *DEFAULT* The early/fast drift rate for this model is determined by H, an 
              measure of action expectation (S-R habits), which learns through
-             an APE.
+             an APE.  
              The late/slow drift rate is determined by the sum of H and a 
-             Q-value, from classic RL, which learns using an RPE.
-Habit2_Race - As with Habit1_Race, but the temperature term for H adapts at t_2
+             Q-value, from classic RL, which learns using an RPE.  
+Habit2_Race - As with Habit1_Race, but the temperature term for H adapts at t_2  
 RL2_Race   - This model uses two Q-values with different learning rates. The early
              drift rate applies Q1, and the later drift rate applies Q1 + Q2. No limitations
-             are placed on the relative learning rates.
+             are placed on the relative learning rates.  
 RL_Race    - Most closely resembles the RL-RDM proposed by Miletic et al. 2021, 
-             using a single constant drift rate, based on a Q-value.
+             using a single constant drift rate, based on a Q-value.  
 
 ## How to use:
 The end-user function is *fitTwoDriftRM.m*, which returns best fitting parameters, the
 overall negative loglikelihood of the provided data, the loglikelihood
-of each trial and an object containing all the model data.
+of each trial and an object containing all the model data.  
 An additional function *Simulate* is provided to create surrogate data.
 
 
 ## Getting Started
 We recommend beginning with *Example_Script.m*, which demonstrates how fitTwoDriftRM.m can be used on the data of one participant provided by Hardwick et al. (2019).
 This script walks through the required data-cleaning, calculates the t_1 heuristic and creates the required input data structures (and optional)
-in order to run *fitTwoDriftRM*. 
+in order to run *fitTwoDriftRM*.  
 This is followed by an example of how to use the *Simulate* function on the Habit1_Race algorithm to create data for 100 free-RT trials followed by 50 time-controlled.
 
 ### Input: Required
-choice: A vector of choices made across the trials (e.g. \[1 2 3 1 4 3 4])
-stimulus: A vector of the stimuli seen in each trial (e.g., \[1 2 4 1 3 3 4])
-rt: A vector of reaction times in each trial  (in seconds)
-outcome: A vector of outcomes (0/1) of each trial (e.g., \[1 1 0 1 0 1 1])
-map: Matrix of stimulus mapping, Rows = pairings, Columns = \[stimulus, responseA, responseB] 
-     (e.g., \[1,1,1;
-             2,2,2;
-             3,3,4;
-             4,4,3])
-time_cont: logical vector of flags for time_controlled (=1, default) or free trials (=0) (e.g., \[0 0 0 0 0 1 1])
+choice: A vector of choices made across the trials (e.g. \[1 2 3 1 4 3 4])  
+stimulus: A vector of the stimuli seen in each trial (e.g., \[1 2 4 1 3 3 4])  
+rt: A vector of reaction times in each trial  (in seconds)  
+outcome: A vector of outcomes (0/1) of each trial (e.g., \[1 1 0 1 0 1 1])  
+map: Matrix of stimulus mapping, Rows = pairings, Columns = \[stimulus, responseA, responseB]   
+     (e.g., \[1,1,1;  
+             2,2,2;  
+             3,3,4;  
+             4,4,3])  
+time_cont: logical vector of flags for time_controlled (=1, default) or free trials (=0) (e.g., \[0 0 0 0 0 1 1])  
 non_decision: non-decision time, t_1, in seconds (= 0.1s, default)
 
 
 ### Optional Input (Name-Value arguments):
-model: Habit1_Race (default), Habit2_Race, RL2_race, RL_race (STRING)
-remap_trial: index of trial where map switches from A to B, (=1, default)
+model: Habit1_Race (default), Habit2_Race, RL2_race, RL_race (STRING)  
+remap_trial: index of trial where map switches from A to B, (=1, default)  
 include_fit: logical vector for trials to be included in fitting
-             procedure. (=ones(1,number trials), default).
-weight: Weighting towards forced trials, 0-1, (=0.5,default)
+             procedure. (=ones(1,number trials), default).  
+weight: Weighting towards forced trials, 0-1, (=0.5,default)  
 new_cond: Trial number where a new condition starts, (return to map A, all 
-          variables reset to initial values), (= [], default).
-mult_start: How many start-points to run fitting from, using the MultiStart MATLAB package. 
-            If this is a non-zero value, the function runs in parallel (=0, default (non-parallel, 1 start point)). 
+          variables reset to initial values), (= [], default).  
+mult_start: How many start-points to run fitting from, using the MultiStart MATLAB package.   
+            If this is a non-zero value, the function runs in parallel (=0, default (non-parallel, 1 start point)).   
 
 
 ### Output
