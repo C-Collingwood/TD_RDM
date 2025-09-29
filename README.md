@@ -57,66 +57,66 @@ mult_start: How many start-points to run fitting from, using the MultiStart MATL
 
 
 ### Output
-PARAM: The best-fitting parameters in a vector. Order is model-dependent:
-    1. "Habit1_Race"
-        ..* \[aq, ah, bq, bh, t2, theta] 
-    2. "Habit2_Race
-        ..* \[aq, ah, bq, bh1, bh2, t2, theta] 
-    3. "RL_Race"
-        ..* \[aq, bq, theta]
-    4. "RL2_Race"
-        ..* \[aq2, aq1, bq2, bq1, t2, theta]
+PARAM: The best-fitting parameters in a vector. Order is model-dependent:  
+    1. "Habit1_Race"  
+        ..* \[aq, ah, bq, bh, t2, theta]   
+    2. "Habit2_Race  
+        ..* \[aq, ah, bq, bh1, bh2, t2, theta]   
+    3. "RL_Race"  
+        ..* \[aq, bq, theta]  
+    4. "RL2_Race"  
+        ..* \[aq2, aq1, bq2, bq1, t2, theta]  
 
-NLL: The total negative loglikelihood of the best-fitting parameters.
-LL: A vector containing the loglikelihood of each trial that was included in fitting. Excluded trials are returned as NaN.
-MODEL: An object containing all data regarding the best-fitting parameters, including:
-    * MODEL.type: String of model name (e.g., "Habit1_Race")
-    * MODEL.free_par: Cell array of parameter names (e.g., {'aq','ah','bq','bh','t2','theta'})
-    * MODEL.par: Table of best-fitting parameter values, including t1 and s)
-    * MODEL.values: Structure containing all Q/H and dq/dh values for each trial, (e.g., MODEL.values.Q)
-    * MODEL.weight: The weighting value, w_c, used to balance time-controlled and free-RT LL values when calculating NLL.
-    * MODEL.map: The mapping structure of stimulus to correct response.
-    * MODEL.par_bound: The upper and lower boundaries on each free parameter.
-    * MODEL.data: A table containing all the data used during the course of model learning and fitting, including:
-        ..* .data.Choice
-        ..* .data.Stimulus
-        ..* .data.Reaction_Time
-        ..* .data.Outcome
-        ..* .data.Time-Controlled
-        ..* .data.Remap_trial (0 = Map A, 1 = Map B)
+NLL: The total negative loglikelihood of the best-fitting parameters.  
+LL: A vector containing the loglikelihood of each trial that was included in fitting. Excluded trials are returned as NaN.  
+MODEL: An object containing all data regarding the best-fitting parameters, including:  
+    * MODEL.type: String of model name (e.g., "Habit1_Race")  
+    * MODEL.free_par: Cell array of parameter names (e.g., {'aq','ah','bq','bh','t2','theta'})  
+    * MODEL.par: Table of best-fitting parameter values, including t1 and s)  
+    * MODEL.values: Structure containing all Q/H and dq/dh values for each trial, (e.g., MODEL.values.Q)  
+    * MODEL.weight: The weighting value, w_c, used to balance time-controlled and free-RT LL values when calculating NLL.  
+    * MODEL.map: The mapping structure of stimulus to correct response.  
+    * MODEL.par_bound: The upper and lower boundaries on each free parameter.  
+    * MODEL.data: A table containing all the data used during the course of model learning and fitting, including:  
+        * .data.Choice  
+        * .data.Stimulus  
+        * .data.Reaction_Time  
+        * .data.Outcome  
+        * .data.Time-Controlled  
+        * .data.Remap_trial (0 = Map A, 1 = Map B)  
 
 
 ## Additional Functions
-This toolbox contains one other end-user function, *Simulate.m*, which can be used to create surrogate data.
-Many of the input arguments (required and optional) are shared with fitTwoDriftRM.
+This toolbox contains one other end-user function, *Simulate.m*, which can be used to create surrogate data.  
+Many of the input arguments (required and optional) are shared with fitTwoDriftRM.  
 
 ### Input: Required
-model: Habit1_Race (default), Habit2_Race, RL2_race, RL_race (STRING).
-trials: total number of trials (free-RT and time-controlled).
-parameter: a vector of parameters in the order \[alpha(s), beta(s), t_2, theta], (as with the PARAM output).
-map: Matrix of stimulus mapping, Rows = pairings, Columns = \[stimulus, responseA, responseB] 
-     (e.g., \[1,1,1;
-             2,2,2;
-             3,3,4;
-             4,4,3])
-non_decision: non-decision time, t_1, in seconds (= 0.1s, default)
+model: Habit1_Race (default), Habit2_Race, RL2_race, RL_race (STRING).  
+trials: total number of trials (free-RT and time-controlled).  
+parameter: a vector of parameters in the order \[alpha(s), beta(s), t_2, theta], (as with the PARAM output).  
+map: Matrix of stimulus mapping, Rows = pairings, Columns = \[stimulus, responseA, responseB]   
+     (e.g., \[1,1,1;  
+             2,2,2;  
+             3,3,4;  
+             4,4,3])  
+non_decision: non-decision time, t_1, in seconds (= 0.1s, default)  
 
 ### Optional Input (Name-Value arguments):
-stimulus: A vector of the stimuli seen in each trial (e.g., \[1 2 4 1 3 3 4], default = random)
-time_cont: logical vector of flags for time_controlled (=1, default) or free trials (=0) (e.g., \[0 0 0 0 0 1 1])
-forced_rt: a vector (1,trial number) with the RT (seconds) at the elements corresponding to time-controlled, default = uniform\[0,2].
-remap_trial: index of trial where map switches from A to B, (=1, default)
+stimulus: A vector of the stimuli seen in each trial (e.g., \[1 2 4 1 3 3 4], default = random)  
+time_cont: logical vector of flags for time_controlled (=1, default) or free trials (=0) (e.g., \[0 0 0 0 0 1 1])  
+forced_rt: a vector (1,trial number) with the RT (seconds) at the elements corresponding to time-controlled, default = uniform\[0,2].  
+remap_trial: index of trial where map switches from A to B, (=1, default)  
 new_cond: Trial number where a new condition starts, (return to map A, all 
-          variables reset to initial values), (= \[], default).
-error: Value for output on error trials (= 0, default).
-reward: Value for output on correct trials (=1, default).
+          variables reset to initial values), (= \[], default).  
+error: Value for output on error trials (= 0, default).  
+reward: Value for output on correct trials (=1, default).  
 
 
 ### Output
-MODEL object as above.
+MODEL object as above.  
 
 
 ## Required MATLAB Packages
-Optimization Toolbox
-Statistics Toolbox
-MATLAB R2024b
+Optimization Toolbox  
+Statistics Toolbox  
+MATLAB R2024b  
