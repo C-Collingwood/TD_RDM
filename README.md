@@ -31,12 +31,11 @@ choice: A vector of choices made across the trials (e.g. \[1 2 3 1 4 3 4])
 stimulus: A vector of the stimuli seen in each trial (e.g., \[1 2 4 1 3 3 4])  
 rt: A vector of reaction times in each trial  (in seconds)  
 outcome: A vector of outcomes (0/1) of each trial (e.g., \[1 1 0 1 0 1 1])  
-map: Matrix of stimulus mapping, Rows = pairings, Columns = \[stimulus, responseA, responseB]  
-  * (e.g., \[1,1,1;  
-             2,2,2;  
-             3,3,4;  
-             4,4,3])
-
+map: Matrix of stimulus mapping, Rows = pairings, Columns = \[stimulus, responseA, responseB]. For example;  
+\[1,1,1;  
+2,2,2;  
+3,3,4;  
+4,4,3])  
 time_cont: logical vector of flags for time_controlled (=1, default) or free trials (=0) (e.g., \[0 0 0 0 0 1 1])  
 non_decision: non-decision time, t_1, in seconds (= 0.1s, default)
 
@@ -88,11 +87,11 @@ Many of the input arguments (required and optional) are shared with fitTwoDriftR
 model: Habit1_Race (default), Habit2_Race, RL2_race, RL_race (STRING).  
 trials: total number of trials (free-RT and time-controlled).  
 parameter: a vector of parameters in the order \[alpha(s), beta(s), t_2, theta], (as with the PARAM output).  
-map: Matrix of stimulus mapping, Rows = pairings, Columns = \[stimulus, responseA, responseB]   
-   (e.g., \[1,1,1;  
-             2,2,2;  
-             3,3,4;  
-             4,4,3])  
+map: Matrix of stimulus mapping, Rows = pairings, Columns = \[stimulus, responseA, responseB]. For example;  
+\[1,1,1;  
+2,2,2;  
+3,3,4;  
+4,4,3])  
 non_decision: non-decision time, t_1, in seconds (= 0.1s, default)  
 
 ### Optional Input (Name-Value arguments):
