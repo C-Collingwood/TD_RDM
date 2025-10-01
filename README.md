@@ -1,5 +1,5 @@
 # Two-Drift_Toolbox
-Draft toolbox for the two-drift race diffusion model, in MATLAB R2024b
+Toolbox for the two-drift race diffusion model, in MATLAB R2024b
 
 The two-drift race diffusion model is an RL-EAM which works in a multi-alternate choice situation,
 with an internal, time-dependent switch in drift-rate.
