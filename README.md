@@ -89,11 +89,10 @@ model: Habit1_Race (default), Habit2_Race, RL2_race, RL_race (STRING).
 trials: total number of trials (free-RT and time-controlled).  
 parameter: a vector of parameters in the order \[alpha(s), beta(s), t_2, theta], (as with the PARAM output).  
 map: Matrix of stimulus mapping, Rows = pairings, Columns = \[stimulus, responseA, responseB]   
-  * (e.g., \[1,1,1;  
+   (e.g., \[1,1,1;  
              2,2,2;  
              3,3,4;  
              4,4,3])  
-
 non_decision: non-decision time, t_1, in seconds (= 0.1s, default)  
 
 ### Optional Input (Name-Value arguments):
